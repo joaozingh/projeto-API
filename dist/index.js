@@ -7,10 +7,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 // Criar a aplicação Express
 const app = (0, express_1.default)();
-//Criar a rota GET principal 
-app.get("/", (req, res) => {
-    res.send("salve");
-});
+//incluir os controllers 
+const login_1 = __importDefault(require("./controllers/login"));
+//criar rotas
+app.use('/', login_1.default);
 // Iniciar o servidor na porta 8080
 app.listen(8080, () => {
     console.log("servidor iniciado na porta 8080: http://localhost:8080");

@@ -5,7 +5,7 @@
     "module": "commonjs",
 
     "outDir": "dist",      //diretorio de saida dos arquivos ja para visualização 
-    "rootDir": "src", 
+    "rootDir": "./src", 
 
     "target": "es2016",
     "esModuleInterop": true,
