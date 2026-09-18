@@ -1,6 +1,8 @@
 //imporrtar a biblioteca Express 
 import express from "express";
 
+import "./database";
+
 
 // Criar a aplicação Express
 const app = express();
