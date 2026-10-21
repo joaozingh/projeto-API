@@ -26,7 +26,7 @@ CREATE TABLE usuarios (
   nome VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   senha VARCHAR(255) NOT NULL,
-  situacao_id INT REFERENCES situacoes(id),
+  situacao_id INT NOT NULL REFERENCES situacoes(id),
   criado_em TIMESTAMP DEFAULT NOW(),
   atualizado_em TIMESTAMP DEFAULT NOW()
 );
@@ -34,8 +34,8 @@ CREATE TABLE usuarios (
 CREATE TABLE produtos (
   id SERIAL PRIMARY KEY,
   nome VARCHAR(255) NOT NULL,
-  situacao_produto_id INT REFERENCES situacoes_produto(id),  
-  categoria_id INT REFERENCES categorias_produto(id),
+  situacao_produto_id INT NOT NULL REFERENCES situacoes_produto(id),
+  categoria_id INT NOT NULL REFERENCES categorias_produto(id),
   criado_em TIMESTAMP DEFAULT NOW(),
   atualizado_em TIMESTAMP DEFAULT NOW()
 );
