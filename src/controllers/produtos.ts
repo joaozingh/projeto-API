@@ -1,19 +1,23 @@
 import express, { Request, Response } from "express";
 import { pool } from "../database";
+import { paginar } from "../services/paginacao";
 
 const router = express.Router();
 
 // LISTAR todos os produtos (com nome da categoria e da situação)
 router.get("/produtos", async (req: Request, res: Response) => {
   try {
-    const result = await pool.query(
-      `SELECT p.id, p.nome, c.nome AS categoria, sp.nome AS situacao
-       FROM produtos p
-       JOIN categorias_produto c ON c.id = p.categoria_id
-       JOIN situacoes_produto sp ON sp.id = p.situacao_produto_id
-       ORDER BY p.id`
-    );
-    res.json(result.rows);
+    const resultado = await paginar({
+      sqlLista: `SELECT p.id, p.nome, c.nome AS categoria, sp.nome AS situacao
+                 FROM produtos p
+                 JOIN categorias_produto c ON c.id = p.categoria_id
+                 JOIN situacoes_produto sp ON sp.id = p.situacao_produto_id
+                 ORDER BY p.id`,
+      sqlTotal: "SELECT COUNT(*) FROM produtos",
+      pagina: Number(req.query.pagina) || 1,
+      limite: Number(req.query.limite) || 10,
+    });
+    res.json(resultado);
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: "Erro ao listar produtos" });

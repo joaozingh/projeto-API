@@ -1,16 +1,21 @@
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { pool } from "../database";
+import { paginar } from "../services/paginacao";
 
 const router = express.Router();
 
-// LISTAR todos os usuários
+// LISTAR usuários (com paginação)
 router.get("/usuarios", async (req: Request, res: Response) => {
   try {
-    const result = await pool.query(
-      "SELECT u.id, u.nome, u.email, s.nome_situacao FROM usuarios u JOIN situacoes s ON s.id = u.situacao_id ORDER BY u.id"
-    );
-    res.json(result.rows);
+    const resultado = await paginar({
+      sqlLista:
+        "SELECT u.id, u.nome, u.email, s.nome_situacao FROM usuarios u JOIN situacoes s ON s.id = u.situacao_id ORDER BY u.id",
+      sqlTotal: "SELECT COUNT(*) FROM usuarios",
+      pagina: Number(req.query.pagina) || 1,
+      limite: Number(req.query.limite) || 10,
+    });
+    res.json(resultado);
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: "Erro ao listar usuários" });
@@ -98,43 +103,6 @@ router.delete("/usuarios/:id", async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: "Erro ao apagar usuário" });
-  }
-});
-
-// LOGIN
-router.post("/login", async (req: Request, res: Response) => {
-  try {
-    const { email, senha } = req.body;
-
-    if (!email || !senha) {
-      return res.status(400).json({ erro: "Informe email e senha" });
-    }
-
-    const result = await pool.query(
-      "SELECT id, nome, email, senha, situacao_id FROM usuarios WHERE email = $1",
-      [email]
-    );
-
-    // Mesma mensagem para e-mail inexistente e senha errada,
-    // assim ninguém descobre quais e-mails estão cadastrados
-    if (result.rows.length === 0) {
-      return res.status(401).json({ erro: "E-mail ou senha inválidos" });
-    }
-
-    const usuario = result.rows[0];
-    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
-
-    if (!senhaCorreta) {
-      return res.status(401).json({ erro: "E-mail ou senha inválidos" });
-    }
-
-    res.json({
-      mensagem: "Login realizado com sucesso",
-      usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email },
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ erro: "Erro ao fazer login" });
   }
 });
 
