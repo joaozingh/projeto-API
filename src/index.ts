@@ -11,10 +11,12 @@ app.use(express.json());
 //incluir os controllers
 import login from "./controllers/login";
 import usuarios from "./controllers/usuarios";
+import produtos from "./controllers/produtos";
 
 //criar rotas
 app.use('/', login);
 app.use('/', usuarios);
+app.use('/', produtos);
 
 // Iniciar o servidor na porta 8080
 app.listen(8080, () => {
