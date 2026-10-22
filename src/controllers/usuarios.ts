@@ -101,4 +101,41 @@ router.delete("/usuarios/:id", async (req: Request, res: Response) => {
   }
 });
 
+// LOGIN
+router.post("/login", async (req: Request, res: Response) => {
+  try {
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+      return res.status(400).json({ erro: "Informe email e senha" });
+    }
+
+    const result = await pool.query(
+      "SELECT id, nome, email, senha, situacao_id FROM usuarios WHERE email = $1",
+      [email]
+    );
+
+    // Mesma mensagem para e-mail inexistente e senha errada,
+    // assim ninguém descobre quais e-mails estão cadastrados
+    if (result.rows.length === 0) {
+      return res.status(401).json({ erro: "E-mail ou senha inválidos" });
+    }
+
+    const usuario = result.rows[0];
+    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+
+    if (!senhaCorreta) {
+      return res.status(401).json({ erro: "E-mail ou senha inválidos" });
+    }
+
+    res.json({
+      mensagem: "Login realizado com sucesso",
+      usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: "Erro ao fazer login" });
+  }
+});
+
 export default router;
