@@ -9,7 +9,7 @@ const router = express.Router();
 
 //Criar a rota GET principal
 router.get("/", (req: Request, res: Response) => {
-  res.send("será? que minha mulher vai me dar uma caveira de presente de hallowen ???????/");
+  res.send("será que vai dar certo usar o cors para requisição tropa ?????/");
 });
 
 // LOGIN (rota pública)

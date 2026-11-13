@@ -2,11 +2,17 @@
 import express from "express";
 import "./database";
 
+//depencias de requisições cors 
+import cors from "cors";
+
 // Criar a aplicação Express
 const app = express();
 
 // Permitir ler JSON no corpo das requisições
 app.use(express.json());
+
+// Criar o midleware para permitir requisiçãp externa 
+app.use(cors());
 
 //incluir os controllers
 import login from "./controllers/login";
@@ -23,7 +29,6 @@ app.use('/', login);
 
 
 //criar rotas
-app.use('/', verificarToken, login);
 app.use('/', verificarToken, usuarios);
 app.use('/', verificarToken, produtos);
 app.use('/', verificarToken, situacoes);

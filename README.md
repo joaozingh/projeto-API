@@ -18,3 +18,5 @@ psql -U postgres -d projeto_api
 
 o INT REFERENCES é um relacionamento no sql 
 exemplo: situacoes_produto_id INT REFERENCES situacoes_produto(id)
+
+validação de formulário//11 usará o yup 
